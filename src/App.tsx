@@ -1,16 +1,16 @@
 import { useState } from "react"
-import Login from "./components/login"
+import { Routes, Route, Navigate } from "react-router-dom"
+import Login from "./components/Login"
+import Dashboard from "./components/Dashboard"
 
 export default function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-
-    if (!isLoggedIn) {
-        return <Login onSuccess={() => setIsLoggedIn(true)} />
-    }
+    const [isLoggedIn, setIsLoggedIn] = useState(true)
 
     return (
-        <div>
-
-        </div>
+        <Routes>
+            <Route path="/" element={<Login onSuccess={() => setIsLoggedIn(true)} />} />
+            <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/" replace/>} />
+        </Routes> 
     )
 }
