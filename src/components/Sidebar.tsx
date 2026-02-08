@@ -171,7 +171,7 @@ export default function ComponentSidebar() {
                     <SidebarGroupLabel>Finance</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                                {aiEngine.map(({ to, label, icon: Icon }) => (
+                                {finance.map(({ to, label, icon: Icon }) => (
                                     <SidebarMenuItem key={to}>
                                         <SidebarMenuButton asChild isActive={location.pathname === to} className="group-data-[collapsible=icon]:!w-full group-data-[collapsible=icon]:!justify-center">
                                             <Link to={to}>

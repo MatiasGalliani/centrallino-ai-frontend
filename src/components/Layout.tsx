@@ -6,7 +6,7 @@ export default function Layout() {
     return (
         <SidebarProvider style={{ "--sidebar-width-icon": "4.5rem" } as React.CSSProperties}>
             <ComponentSidebar />
-            <main>
+            <main className="flex-1 min-w-0 overflow-auto">
                 <SidebarTrigger />
                 <Outlet />
             </main>
