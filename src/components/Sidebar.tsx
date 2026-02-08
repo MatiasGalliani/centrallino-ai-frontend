@@ -9,10 +9,9 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarMenuSubButton,
     useSidebar
 } from "@/components/ui/sidebar"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { 
     CaretCircleDoubleRight, 
     UserCircle,
@@ -67,8 +66,11 @@ const finance = [
     }
 ]
 
-export default function ComponentSidebar() {
+type SidebarProps = { onLogout?: () => void}
+
+export default function ComponentSidebar({ onLogout }: SidebarProps = {}) {
     const location = useLocation()
+    const navigate = useNavigate()
     const { state } = useSidebar()
     const isCollapsed = state === "collapsed"
 
@@ -201,7 +203,7 @@ export default function ComponentSidebar() {
                                  type="button"
                                  onClick={() => {
                                     onLogout?.()
-                                    Navigate("/")
+                                    navigate("/")
                                  }}
                                  className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2"
                                 >
