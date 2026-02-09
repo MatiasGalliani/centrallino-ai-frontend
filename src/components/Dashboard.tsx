@@ -1,4 +1,3 @@
-import { Separator } from "@/components/ui/separator"
 import {
     Card,
     CardContent,
@@ -82,9 +81,6 @@ export default function Dashboard() {
 
     return (
         <div className="flex flex-col w-full min-w-0">
-            <h1 className="text-xl font-semibold tracking-tight ml-6">Dashboard</h1>
-            <Separator className="mt-2 w-full" />
-
             <div className="grid gap-4 p-6 md:grid-cols-3">
                 <Card className="flex-1 flex flex-col">
                     <CardHeader>
