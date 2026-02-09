@@ -26,7 +26,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { Activity, Pause, Play, RefreshCw, Send, Zap } from "lucide-react"
+import { Pause, Play, RefreshCw, Send } from "lucide-react"
 
 type LogLevel = "info" | "success" | "warn" | "error"
 
