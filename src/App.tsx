@@ -4,6 +4,7 @@ import Login from "./components/Login"
 import Dashboard from "./components/Dashboard"
 import Layout from "./components/Layout"
 import CallHistory from "./components/CallHistory"
+import LiveConsole from "./components/LiveConsole"
 
 export default function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(true)
@@ -14,6 +15,7 @@ export default function App() {
             <Route path="/" element={isLoggedIn ? <Layout /> : <Navigate to="/" replace />}>
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="call-history" element={<CallHistory />} />
+                <Route path="live-console" element={<LiveConsole />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace/>} />
         </Routes> 
