@@ -101,7 +101,7 @@ export default function CallHistory() {
                 </TableHeader>
                 <TableBody>
                     {MOCK_CALLS.map((row, i) => (
-                        <TableRow>
+                        <TableRow key={i}>
                             <TableCell className="whitespace-nowrap">{row.timestamp}</TableCell>
                             <TableCell>{row.lead}</TableCell>
                             <TableCell>{row.campaign}</TableCell>
