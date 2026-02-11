@@ -21,7 +21,8 @@ import {
     OpenAiLogo,
     HeadCircuit,
     Coins,
-    SignOut } from "@phosphor-icons/react"
+    SignOut,
+    WhatsappLogo } from "@phosphor-icons/react"
 import { LayoutDashboard } from "lucide-react"
 
 
@@ -40,6 +41,9 @@ const operationsItems = [
 const orchestrationItems = [
     {
         to: "/campaigns", label: "Campaigns", icon: Megaphone
+    },
+    {
+        to: "/whatsapp-integration", label: "Whatsapp Integration", icon: WhatsappLogo
     }
 ]
 
