@@ -145,7 +145,7 @@ export default function LiveConsole() {
                 
                 <Separator />
 
-                <Card className="flex flex-1 flex-col overflow-hidden">
+                <Card className="flex flex-1 flex-col overflow-hidden bg-transparent border-transparent -mt-6 -mb-6">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             Event stream

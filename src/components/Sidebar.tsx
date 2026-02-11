@@ -18,8 +18,6 @@ import {
     PhoneList,
     TerminalWindow,
     Megaphone,
-    Plugs,
-    Path,
     OpenAiLogo,
     HeadCircuit,
     Coins,
@@ -42,12 +40,6 @@ const operationsItems = [
 const orchestrationItems = [
     {
         to: "/campaigns", label: "Campaigns", icon: Megaphone
-    },
-    {
-        to: "/crm-integration", label: "CRM Integration", icon: Plugs
-    },
-    {
-        to: "/routing-routes", label: "Routing Rules", icon: Path
     }
 ]
 

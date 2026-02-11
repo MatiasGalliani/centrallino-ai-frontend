@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import { Send } from "lucide-react"
+import { Send, Copy, Check } from "lucide-react"
 
 export default function Finance() {
     const LOW_BALANCE_THRESHOLD = 50
@@ -20,13 +20,35 @@ export default function Finance() {
         totalInvested: 450.00,
     }
 
-    const [reference, setReference] = useState("")
+    const [reference, setReference] = useState("ACC-VOICE-CREDITS-12345")
     const [notifySent, setNotifySent] = useState(false)
     const BANK_DETAILS = {
         name: "Matias Nahuel Galliani",
         iban : "NL00 BUNQ 0000 0000 00",
         bic: "BUNQNL2A"
     }
+
+    const copyToClipboard = (text:string, fieldId: string) => {
+        navigator.clipboard.writeText(text)
+        setCopiedField(fieldId)
+        setTimeout(() => setCopiedField(null), 1500)
+    }
+    const [copiedField, setCopiedField] = useState<string | null>(null)
+
+    const CopyButton = ({ text, fieldId }: { text: string; fieldId: string }) => (
+        <button 
+            type="button"
+            onClick={() => copyToClipboard(text, fieldId)}    
+            className="inline-flex items-center justify-center size-7 rounded-md border boder-input bg-background hover:bg-accent hover:text-accent-foreground ml-2"
+            aria-label="Copy"
+        >
+            {copiedField === fieldId ? (
+                <Check className="size-3.5" />
+            ) : (
+                <Copy className="size-3.5" />
+            )}
+        </button>
+    )
 
     return (
         <div className="flex flex-col w-full min-w-0">
@@ -95,21 +117,34 @@ export default function Finance() {
                         </CardDescription>
                         <CardContent className="pl-0 pr-6">
                             <div className="rounded-lg border bg-muted/50 p-4 font-mono text-sm mt-4 pl-6">                                <dl className="text-muted-foreground">Name</dl>
-                                <dd>{BANK_DETAILS.name}</dd>
+                                <dd className="flex items-center">
+                                    {BANK_DETAILS.name}
+                                    <CopyButton text={BANK_DETAILS.name} fieldId="name" />
+                                </dd>
                                 <dl className="text-muted-foreground">IBAN</dl>
-                                <dd>{BANK_DETAILS.iban}</dd>
+                                <dd className="flex items-center">
+                                    {BANK_DETAILS.iban}
+                                    <CopyButton text={BANK_DETAILS.iban} fieldId="iban" />
+                                </dd>
                                 <dt className="text-muted-foreground">BIC / SWIFT</dt>
-                                <dd>{BANK_DETAILS.bic}</dd>
+                                <dd className="flex items-center">
+                                    {BANK_DETAILS.bic}
+                                    <CopyButton text={BANK_DETAILS.bic} fieldId="bic" />
+                                </dd>
                             </div>
                             <div className="grid gap-2 mt-4 -ml-6 pl-6">     
                                 <Label htmlFor="transfer-reference">Reference to include in transfer</Label>
-                                <Input
-                                    id="trasnfer-reference"
-                                    placeholder="ACC-VOICE-CREDITS-12345"
-                                    value={reference}
-                                    onChange={(e) => setReference(e.target.value)}
-                                    className="font-mono mt-1"
-                                />
+                                <div className="flex items-center gap-2">
+                                    <Input
+                                        id="trasnfer-reference"
+                                        placeholder="ACC-VOICE-CREDITS-12345"
+                                        value={reference}
+                                        onChange={(e) => setReference(e.target.value)}
+                                        className="font-mono mt-1 flex-1"
+                                        disabled
+                                    />
+                                    <CopyButton text={reference} fieldId="reference" />
+                                </div>
                             </div>
                             <div className="flex flex-wrap items-center gap-2 mt-4">
                                 <Button

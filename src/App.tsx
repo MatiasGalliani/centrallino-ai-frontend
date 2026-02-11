@@ -7,6 +7,7 @@ import CallHistory from "./components/CallHistory"
 import LiveConsole from "./components/LiveConsole"
 import Campaigns from "./components/Campaigns"
 import Finance from "./components/Finance"
+import PromptStudio from "./components/PromptStudio"
 
 export default function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(true)
@@ -20,6 +21,7 @@ export default function App() {
                 <Route path="live-console" element={<LiveConsole />} />
                 <Route path="campaigns" element={<Campaigns />} />
                 <Route path="finance" element={<Finance />} />
+                <Route path="prompt-studio" element={<PromptStudio />} />
         </Route>
             <Route path="*" element={<Navigate to="/" replace/>} />
         </Routes> 
