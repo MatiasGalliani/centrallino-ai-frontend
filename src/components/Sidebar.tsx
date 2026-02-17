@@ -18,7 +18,6 @@ import {
     PhoneList,
     TerminalWindow,
     Megaphone,
-    OpenAiLogo,
     HeadCircuit,
     Coins,
     SignOut,
@@ -48,9 +47,6 @@ const orchestrationItems = [
 ]
 
 const aiEngine = [
-    {
-        to: "/prompt-studio", label: "Prompt Studio", icon: OpenAiLogo
-    },
     {
         to: "/voice-lab", label: "Voice Lab", icon: HeadCircuit
     }
@@ -194,7 +190,7 @@ export default function ComponentSidebar({ onLogout }: SidebarProps = {}) {
                 <SidebarFooter>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <SidebarMenuButton asChild className="group-data-[collapsible=icon]:!w-full group-data-[collapsible=icon]!justify-center">
+                            <SidebarMenuButton asChild className="group-data-[collapsible=icon]:!w-full group-data-[collapsible=icon] !justify-left cursor-pointer">
                                 <button
                                  type="button"
                                  onClick={() => {
@@ -204,7 +200,7 @@ export default function ComponentSidebar({ onLogout }: SidebarProps = {}) {
                                  className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2"
                                 >
                                     {isCollapsed ? (
-                                        <div className="flex w-ful justify-center items-center">
+                                        <div className="flex w-full justify-center items-center">
                                             <SignOut className="size-6 shrink-0" />
                                         </div>
                                     ) : (

@@ -147,3 +147,42 @@
 .scrollbar-dark::-webkit-scrollbar-thumb:hover {
   background: oklch(0.5 0 0);
 }
+
+/* Dark dropdown – use class "select-dark" on <select> */
+select.select-dark {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-color: oklch(0.145 0.0 0);
+  color: oklch(0.97 0 0);
+  border: 1px solid oklch(0.35 0 0);
+  border-radius: 0.5rem;
+  padding: 0.375rem 2.5rem 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  min-height: 2.25rem;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+}
+
+select.select-dark:hover {
+  border-color: oklch(0.45 0 0);
+}
+
+select.select-dark:focus {
+  border-color: oklch(0.55 0 0);
+  box-shadow: 0 0 0 3px oklch(0.35 0 0 / 0.5);
+}
+
+select.select-dark option {
+  background-color: oklch(0.145 0 0);
+  color: oklch(0.97 0 0);
+}
+
+select.select-dark option:checked,
+select.select-dark option:hover {
+  background-color: oklch(0.25 0 0);
+}

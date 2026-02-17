@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Card,
   CardContent,
@@ -12,28 +12,87 @@ import { Badge } from "@/components/ui/badge"
 import { Play, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-const MOCK_VOICES = [
-  { id: "rachel", name: "Rachel", style: "Professional", description: "Clear and neutral, ideal for business calls." },
-  { id: "adam", name: "Adam", style: "Warm", description: "Friendly and conversational tone." },
-  { id: "bella", name: "Bella", style: "Expressive", description: "Natural emphasis and emotion." },
-  { id: "josh", name: "Josh", style: "Calm", description: "Relaxed and reassuring delivery." },
-  { id: "emily", name: "Emily", style: "Professional", description: "Polished and articulate." },
-  { id: "sam", name: "Sam", style: "Conversational", description: "Casual and approachable." },
-]
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000"
+
+interface Voice {
+  id: string
+  name: string
+  category: string
+  description: string
+}
 
 export default function VoiceLab() {
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [testingId, setTestingId] = useState<string | null>(null)
+  const [previewError, setPreviewError] = useState<string | null>(null)
 
-  const handleTest = (id: string) => {
+  useEffect(() => {
+    fetch(`${API_BASE}/api/voices`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) throw new Error(data.error)
+        setVoices(data.voices || [])
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const handleTest = async (id: string) => {
+    setPreviewError(null)
     setTestingId(id)
-    // Mock: simulate playback for 2 seconds
-    setTimeout(() => setTestingId(null), 2000)
+    try {
+      const res = await fetch(`${API_BASE}/api/voices/${id}/preview`)
+      const contentType = res.headers.get("Content-Type") || ""
+
+      if (!res.ok) {
+        const body = await res.text()
+        let msg = body
+        try {
+          const json = JSON.parse(body)
+          msg = json.details || json.error || body
+        } catch {
+          msg = body || `HTTP ${res.status}`
+        }
+        throw new Error(msg)
+      }
+
+      if (!contentType.includes("audio")) {
+        const text = await res.text()
+        throw new Error(text ? text.slice(0, 200) : "Server did not return audio")
+      }
+
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const audio = new Audio(url)
+      audio.onended = () => {
+        URL.revokeObjectURL(url)
+        setTestingId(null)
+      }
+      audio.onerror = () => {
+        URL.revokeObjectURL(url)
+        setTestingId(null)
+        setPreviewError("Playback failed")
+      }
+      await audio.play()
+    } catch (e: unknown) {
+      setTestingId(null)
+      setPreviewError(e instanceof Error ? e.message : "Failed to load preview")
+    }
   }
+
+  if (loading) return <div className="p-6">Loading voices…</div>
+  if (error) return <div className="p-6 text-destructive">Error: {error}</div>
 
   return (
     <div className="flex flex-col w-full min-w-0 p-6">
+      {previewError && (
+        <div className="mb-4 rounded-md bg-destructive/10 px-4 py-2 text-sm text-destructive">
+          Preview: {previewError}
+        </div>
+      )}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {MOCK_VOICES.map((voice) => (
+        {voices.map((voice) => (
           <Card
             key={voice.id}
             className={cn(
@@ -45,11 +104,11 @@ export default function VoiceLab() {
               <div className="flex items-start justify-between gap-2">
                 <CardTitle className="text-base">{voice.name}</CardTitle>
                 <Badge variant="secondary" className="shrink-0">
-                  {voice.style}
+                  {voice.category}
                 </Badge>
               </div>
               <CardDescription className="text-sm">
-                {voice.description}
+                {voice.description || voice.category}
               </CardDescription>
             </CardHeader>
             <CardContent className="pb-2">

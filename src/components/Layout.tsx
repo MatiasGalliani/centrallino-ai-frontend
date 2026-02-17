@@ -18,11 +18,8 @@ const pathToTitle: Record<string, string> = {
     "/call-history": "Call History",
     "/live-console": "Live Console",
     "/campaigns": "Campaigns",
-    "/crm-integration": "CRM Integration",
-    "/routing-routes": "Routing Rules",
-    "/prompt-studio": "Prompt Studio",
     "/voice-lab": "Voice Lab",
-    "finance": "Finance"
+    "/finance": "Finance"
 }
 
 const navItems: { to: string, label: string }[] = [
@@ -30,9 +27,6 @@ const navItems: { to: string, label: string }[] = [
     { to: "/call-history", label: "Call History" },
     { to: "/live-console", label: "Live Console" },
     { to: "/campaigns", label: "Campaigns" },
-    { to: "/crm-integration", label: "CRM Integration" },
-    { to: "/routing-routes", label: "Routing Routes" },
-    { to: "/prompt-studio", label: "Prompt Studio" },
     { to: "/voice-lab", label: "Voice Lab" },
     { to: "/finance", label: "Finance" },
 ]

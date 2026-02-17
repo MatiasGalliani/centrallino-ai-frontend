@@ -7,8 +7,6 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import {
     Table,
@@ -26,7 +24,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { Pause, Play, RefreshCw, Send } from "lucide-react"
+import { Pause, Play, RefreshCw } from "lucide-react"
 
 type LogLevel = "info" | "success" | "warn" | "error"
 
@@ -66,7 +64,6 @@ function LevelBadge({ level }: { level: LogLevel }) {
 export default function LiveConsole() {
     const [connected, setConnected] = useState(false)
     const [connecting, setConnecting] = useState(false)
-    const [command, setCommand] = useState("")
 
     const handleConnect = () => {
         setConnecting(true)
@@ -175,38 +172,6 @@ export default function LiveConsole() {
                                 ))}
                             </TableBody>
                         </Table>
-                    </CardContent>
-                </Card>
-
-                <Separator />
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-base">Send command</CardTitle>
-                        <CardDescription>
-                            Run a command in the live session (e.g. status, pause, resume)
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-end">
-                        <div className="grid flex-1 gap-2">
-                            <Label htmlFor="console-command">Command</Label>
-                            <Input
-                                id="console-command"
-                                placeholder="Type a command"
-                                value={command}
-                                onChange={(e) => setCommand(e.target.value)}
-                                className="font-mono mt-2"
-                            />
-                        </div>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button disabled={!connected || !command.trim()} className="sm:shrink-0">
-                                    <Send className="size-4" />
-                                    Send
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Send command to live session</TooltipContent>
-                        </Tooltip>
                     </CardContent>
                 </Card>
             </div>
