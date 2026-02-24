@@ -125,25 +125,6 @@ export default function CampaignDetail() {
         }
     }
 
-    const handleSaveCallSettings = async () => {
-        if (!campaign) return
-        setCallSettingsError(null)
-        try {
-            const res = await fetch(`${API}/campaigns/${campaign.id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    initial_delay: parseInt(initialDelay, 10),
-                }),
-            })
-            if (!res.ok) throw new Error("Failed to save call settings")
-            setCallSettingsSaved(true)
-            setTimeout(() => setCallSettingsSaved(false), 2000)
-        } catch (e) {
-            setCallSettingsError(e instanceof Error ? e.message : "Failed to save call settings")
-        }
-    }
-
     const saveVoiceId = async (voiceIdValue: string) => {
         if (!campaign) return
         setVoiceSaveError(null)
@@ -253,6 +234,26 @@ export default function CampaignDetail() {
         }
       }
 
+    const [webhookSaved, setWebhookSaved] = useState(false)
+    const [webhookError, setWebhookError] = useState<string | null>(null)
+
+    const saveWebhookUrl = async () => {
+        if (!campaign) return
+        setWebhookError(null)
+        try {
+            const res = await fetch(`${API}/campaigns/${campaign.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ webhook_url: webhookUrl }),
+            })
+            if (!res.ok) throw new Error("Failed to save webhook URL")
+            setWebhookSaved(true)
+            setTimeout(() => setWebhookSaved(false), 2000)
+        } catch (e) {
+            setWebhookError(e instanceof Error ? e.message : "Failed to save webhook URL")
+        }
+    }
+
     return (
         <div className="w-full min-w-0 p-6">
             <div className="flex items-center justify-between mb-6">
@@ -298,7 +299,7 @@ export default function CampaignDetail() {
                 </DialogContent>
             </Dialog>
 
-            <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+            <Dialog open={deleteConfirmOpen} onOpenChange={(open) => { setDeleteConfirmOpen(open); if (!open) setDeleteConfirmText("") }}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>Are you sure?</DialogTitle>
@@ -423,13 +424,27 @@ export default function CampaignDetail() {
                                 <Label htmlFor="webhook-url" className="text-sm font-medium">
                                     Outbound leads destination
                                 </Label>
-                                <Input
-                                    id="webhook-url"
-                                    type="url"
-                                    placeholder="https://hooks.zapier.com/..."
-                                    value={webhookUrl}
-                                    onChange={(e) => setWebhookUrl(e.target.value)}
-                                />
+                                <div className="flex gap-2">
+                                    <Input
+                                        id="webhook-url"
+                                        type="url"
+                                        placeholder="https://hooks.zapier.com/..."
+                                        value={webhookUrl}
+                                        onChange={(e) => setWebhookUrl(e.target.value)}
+                                        className="flex-1"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        className="shrink-0"
+                                        onClick={saveWebhookUrl}
+                                    >
+                                        <Save className="size-4" />
+                                        {webhookSaved ? "Saved" : "Save"}
+                                    </Button>
+                                </div>
+                                {webhookError && <p className="text-xs text-destructive">{webhookError}</p>}
                                 <p className="text-xs text-muted-foreground">
                                     URL where qualified leads are sent (e.g. Zapier, CRM webhook).
                                 </p>
@@ -458,6 +473,8 @@ export default function CampaignDetail() {
                                 ))}
                             </SelectContent>
                         </Select>
+                        {voicesError && <p className="text-sm text-destructive">{voicesError}</p>}
+                        {voiceSaveError && <p className="text-sm text-destructive">{voiceSaveError}</p>}
                         <Button variant="outline" asChild className="w-full">
                             <Link to="/voice-lab">
                                 <Headphones className="size-4" />
@@ -538,6 +555,8 @@ export default function CampaignDetail() {
                                 How long to wait between retry attempts.
                             </p>
                         </div>
+                        {callSettingsError && <p className="text-sm text-destructive">{callSettingsError}</p>}
+                        {callSettingsSaved && <p className="text-sm text-green-600">Settings saved</p>}
                     </CardContent>
                 </Card>
             </div>
