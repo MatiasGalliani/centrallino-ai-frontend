@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import {
   Card,
   CardContent,
@@ -26,6 +26,7 @@ export default function VoiceLab() {
   const [error, setError] = useState<string | null>(null)
   const [testingId, setTestingId] = useState<string | null>(null)
   const [previewError, setPreviewError] = useState<string | null>(null)
+  const [voices, setVoices] = useState<Voice[]>([])
 
   useEffect(() => {
     fetch(`${API_BASE}/api/voices`)

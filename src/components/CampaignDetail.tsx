@@ -76,7 +76,7 @@ export default function CampaignDetail() {
     useEffect(() => {
         if (!campaign) return
         const p = (campaign.campaign_prompt as string) ?? ""
-        const v = (campaign.voice_id as string) ?? ""
+        const v = campaign.voice_id != null ? String(campaign.voice_id) : ""
         const w = (campaign.webhook_url as string) ?? ""
         setCampaignPrompt(p)
         setSelectedVoiceId(v)
@@ -85,10 +85,6 @@ export default function CampaignDetail() {
         setRetryInterval(String(campaign.retry_interval ?? "30"))
         setWebhookUrl(w)
     }, [campaign])
-
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/d32fa3f5-c8dd-4c14-a1af-f7e34d2fa2d9', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'CampaignDetail.tsx:params', message: 'CampaignDetail params and lookup', data: { slug, loading, campaignFound: !!campaign, fetchError }, timestamp: Date.now(), hypothesisId: 'post-fix' }) }).catch(() => { });
-    // #endregion
 
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
@@ -99,6 +95,18 @@ export default function CampaignDetail() {
     const [campaignPrompt, setCampaignPrompt] = useState("")
     const [saved, setSaved] = useState(false)
     const [promptError, setPromptError] = useState<string | null>(null)
+    
+    const [callSettingsSaved, setCallSettingsSaved] = useState(false)
+    const [callSettingsError, setCallSettingsError] = useState<string | null>(null)
+
+    const [promptDialogOpen, setPromptDialogOpen] = useState(false)
+
+    const [selectedVoiceId, setSelectedVoiceId] = useState("")
+    const [voiceSaveError, setVoiceSaveError] = useState<string | null>(null)
+    const [initialDelay, setInitialDelay] = useState("0")
+    const [maxRetries, setMaxRetries] = useState("3")
+    const [retryInterval, setRetryInterval] = useState("30")
+    const [webhookUrl, setWebhookUrl] = useState("")
 
     const handleSavePrompt = async () => {
         if (!campaign) return
@@ -117,13 +125,39 @@ export default function CampaignDetail() {
         }
     }
 
-    const [promptDialogOpen, setPromptDialogOpen] = useState(false)
+    const handleSaveCallSettings = async () => {
+        if (!campaign) return
+        setCallSettingsError(null)
+        try {
+            const res = await fetch(`${API}/campaigns/${campaign.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    initial_delay: parseInt(initialDelay, 10),
+                }),
+            })
+            if (!res.ok) throw new Error("Failed to save call settings")
+            setCallSettingsSaved(true)
+            setTimeout(() => setCallSettingsSaved(false), 2000)
+        } catch (e) {
+            setCallSettingsError(e instanceof Error ? e.message : "Failed to save call settings")
+        }
+    }
 
-    const [selectedVoiceId, setSelectedVoiceId] = useState("")
-    const [initialDelay, setInitialDelay] = useState("0")
-    const [maxRetries, setMaxRetries] = useState("3")
-    const [retryInterval, setRetryInterval] = useState("30")
-    const [webhookUrl, setWebhookUrl] = useState("")
+    const saveVoiceId = async (voiceIdValue: string) => {
+        if (!campaign) return
+        setVoiceSaveError(null)
+        try {
+            const res = await fetch(`${API}/campaigns/${campaign.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ voice_id: voiceIdValue }),
+            })
+            if (!res.ok) throw new Error('Failed to save voice')
+        } catch (e) {
+            setVoiceSaveError(e instanceof Error ? e.message : 'Failed to save voice')
+        }
+    }
 
     const handleDeleteContinue = () => {
         setDeleteDialogOpen(false)
@@ -166,6 +200,58 @@ export default function CampaignDetail() {
             </div>
         )
     }
+
+    const saveInitialDelay = async (delayValue: string) => {
+        if (!campaign) return
+        setCallSettingsError(null)
+        try {
+          const res = await fetch(`${API}/campaigns/${campaign.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ initial_delay: parseInt(delayValue, 10) }),
+          })
+          if (!res.ok) throw new Error("Failed to save call settings")
+          setCallSettingsSaved(true)
+          setTimeout(() => setCallSettingsSaved(false), 2000)
+        } catch (e) {
+          setCallSettingsError(e instanceof Error ? e.message : "Failed to save call settings")
+        }
+      }
+
+    const saveMaxRetries = async (value: string) => {
+        if (!campaign) return
+        setCallSettingsError(null)
+        const num = parseInt(value, 10)
+        try {
+          const res = await fetch(`${API}/campaigns/${campaign.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ max_retries: num }),
+          })
+          if (!res.ok) throw new Error("Failed to save call settings")
+          setCallSettingsSaved(true)
+          setTimeout(() => setCallSettingsSaved(false), 2000)
+        } catch (e) {
+          setCallSettingsError(e instanceof Error ? e.message : "Failed to save call settings")
+        }
+      }
+
+    const saveRetryInterval = async (value: string) => {
+        if (!campaign) return
+        setCallSettingsError(null)
+        try {
+          const res = await fetch(`${API}/campaigns/${campaign.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ retry_interval: parseInt(value, 10) }),
+          })
+          if (!res.ok) throw new Error("Failed to save call settings")
+          setCallSettingsSaved(true)
+          setTimeout(() => setCallSettingsSaved(false), 2000)
+        } catch (e) {
+          setCallSettingsError(e instanceof Error ? e.message : "Failed to save call settings")
+        }
+      }
 
     return (
         <div className="w-full min-w-0 p-6">
@@ -360,13 +446,13 @@ export default function CampaignDetail() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
-                        <Select value={selectedVoiceId} onValueChange={setSelectedVoiceId} disabled={voicesLoading}>
+                        <Select value={selectedVoiceId} onValueChange={(value) => { setSelectedVoiceId(value); saveVoiceId(value); }} disabled={voicesLoading}>
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select a voice…" />
                             </SelectTrigger>
                             <SelectContent>
                                 {voices.map((voice) => (
-                                    <SelectItem key={voice.id} value={voice.id}>
+                                    <SelectItem key={voice.id} value={String(voice.id)}>
                                         {voice.name} — {voice.category}
                                     </SelectItem>
                                 ))}
@@ -393,7 +479,7 @@ export default function CampaignDetail() {
                             <Label htmlFor="initial-delay" className="text-sm font-medium">
                                 Initial Delay
                             </Label>
-                            <Select value={initialDelay} onValueChange={setInitialDelay}>
+                            <Select value={initialDelay} onValueChange={(value) => { setInitialDelay(value); saveInitialDelay(value); }}>
                                 <SelectTrigger id="initial-delay" className="w-full">
                                     <SelectValue placeholder="Select delay…" />
                                 </SelectTrigger>
@@ -414,7 +500,7 @@ export default function CampaignDetail() {
                             <Label htmlFor="max-retries" className="text-sm font-medium">
                                 Max Retries
                             </Label>
-                            <Select value={maxRetries} onValueChange={setMaxRetries}>
+                            <Select value={maxRetries} onValueChange={(value) => { setMaxRetries(value); saveMaxRetries(value); }}>
                                 <SelectTrigger id="max-retries" className="w-full">
                                     <SelectValue placeholder="Select retries…" />
                                 </SelectTrigger>
@@ -435,7 +521,7 @@ export default function CampaignDetail() {
                             <Label htmlFor="retry-interval" className="text-sm font-medium">
                                 Retry Interval
                             </Label>
-                            <Select value={retryInterval} onValueChange={setRetryInterval}>
+                            <Select value={retryInterval} onValueChange={(value) => { setRetryInterval(value); saveRetryInterval(value); }}>
                                 <SelectTrigger id="retry-interval" className="w-full">
                                     <SelectValue placeholder="Select interval…" />
                                 </SelectTrigger>
